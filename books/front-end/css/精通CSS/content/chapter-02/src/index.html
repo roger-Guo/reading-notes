@@ -8,10 +8,36 @@
         .btn1:active {
             color: aqua;
         }
+        .a1:link {
+            color: aqua;
+        }
+        .a1:visited {
+            color: orange;
+        }
+        .a1:hover {
+            color: #123432;
+        }
+        .ul1>li:nth-of-type(1) {
+            background-color: #123432;
+        }
+        .p1::selection {
+            background-color: orange;
+        }
     </style>
 </head>
 <body>
-    <button class="btn1">click me!</button>
+    <h2>:active</h2>
+    <button class="btn1" id="btn1">click me!</button>
+    <h2>:link :visited</h2>
+    <a class="a1" href="#btn1">link1</a>
+    <h2>:nth-of-type</h2>
+    <ul class="ul1">
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+    </ul>
+    <h2>::selection</h2>
+    <p class="p1">白桦林</p>
 <script>
 
 </script>
