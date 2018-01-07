@@ -10,18 +10,33 @@
 </head>
 <body>
 <h1>正则表达式</h1>
+<h2 id="h2" v-if = "Math.random() > 0.5">
+    show
+</h2>
 <script>
-    const str01 = '.y.y.y..y',
-          regExp01 = /\.y/g;
+    class Vue {
+        constructor(obj) {
+            if (!obj.hasOwnProperty('el')) {
+                throw new Error('don\'t has property el');
+            } else {
+                const elem = document.querySelector('#' + obj.el),
+                      html = elem.outerHTML,
+                      regExp = /v-if\s*=\s*"(.*)"/gi;
 
-    console.log(regExp01.exec(str01));
-    console.log(regExp01.exec(str01));
-    console.log(regExp01.exec(str01));
-    console.log(regExp01.exec(str01));
-    console.log(regExp01.exec(str01));
+              regExp.exec(html);
 
+              if (eval(RegExp.lastParen)) {
+                elem.style.display = 'none';
+              } else {
+                elem.style.display = 'block';
+              }
+            }
+        }
+    }
 
-
+    let v = new Vue({
+      el: 'h2'
+    });
 </script>
 </body>
 </html>
