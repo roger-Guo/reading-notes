@@ -23,13 +23,13 @@
                       html = elem.outerHTML,
                       regExp = /v-if\s*=\s*"(.*)"/gi;
 
-              regExp.exec(html);
+                regExp.exec(html);
 
-              if (eval(RegExp.lastParen)) {
-                elem.style.display = 'none';
-              } else {
-                elem.style.display = 'block';
-              }
+                if (eval(RegExp.lastParen)) {
+                    elem.style.display = 'none';
+                } else {
+                    elem.style.display = 'block';
+                }
             }
         }
     }

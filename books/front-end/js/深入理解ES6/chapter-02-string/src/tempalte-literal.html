@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href=""/>
+    <style>
+
+    </style>
+</head>
+<body>
+<input id="input1" title="" type="text"><button id="btn1">click me</button>
+<script>
+    document.querySelector('#btn1').onclick = function () {
+        const message = raw`${document.querySelector('#input1').value}`;
+        const message2 = raw`1\n2`;
+
+        console.log('message ', message);
+        console.log('message2 ', message2);
+        eval(message);
+    };
+
+    // 没有效果 暂时不支持 String.raw() raw函数也没有效果
+    function raw(literals, ...substitution) {
+        let result = '';
+
+        for (let i = 0; i < substitution.length; i++) {
+            result += literals.raw[i];
+            result += substitution[i];
+        }
+
+        result += literals.raw[literals.length - 1];
+
+        return result;
+    }
+</script>
+</body>
+</html>
