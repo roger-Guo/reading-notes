@@ -12,6 +12,18 @@
     var person = new Person('Nicholas');
     var notAPerson = Person.call(person, 'Michael'); // 报错
 ```
+#### 展开运算符
+```javascript
+    // 展开运算符
+    let [first, ...rest] = colors;
+
+    // 克隆数组 也可以用contact方法克隆
+    let [...clone] = colors;
+
+    // 拷贝对象
+    let a = {a: 1, b: 2}
+    let b = {...a, c: 3} // {a: 1, b: 2, c: 3}
+```
 #### __`Object.getPropertyOf()`__
 #### __`Object.setPropertyOf()`__
 #### super 指向对象原型的指针
