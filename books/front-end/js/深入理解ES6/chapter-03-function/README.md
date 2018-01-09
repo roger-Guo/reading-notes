@@ -12,4 +12,27 @@
     var person = new Person('Nicholas');
     var notAPerson = Person.call(person, 'Michael'); // 报错
 ```
- 
+#### __`Object.getPropertyOf()`__
+#### __`Object.setPropertyOf()`__
+#### super 指向对象原型的指针
+##### 对象原型函数中的this指向该对象 该对象如果作为另一个对象的原型 那么this指向另一个对象
+##### 匿名函数的this执行window
+```javascript
+    let person = {
+        getGreeting() {
+            return 'hello';
+        }
+    };
+
+    let friend = {
+        getGreeting() {
+            return super.getGreeting() + ', hi!';
+        }
+    }
+
+    // super此时始终执行person
+    Object.setPropertyOf(friend, person);
+
+    // 多重继承 super非常有用
+    let relative = Object.create(friend);
+```
