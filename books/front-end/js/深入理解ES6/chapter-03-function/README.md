@@ -7,7 +7,6 @@
         } else {
             throw new Error('必须通过new关键字来调用Person');
         }
-
     }
 
     var person = new Person('Nicholas');
