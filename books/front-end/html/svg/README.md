@@ -46,7 +46,7 @@
         <span class="percent-number" title="">' + rate + '</span>
     </div>
 ```
-## 动画 [参考文章](article)
+## 动画 [参考文章][article]
 ```html
 <svg width="800" height="250" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <!--set间隔3s向下走到cy为160地点-->
