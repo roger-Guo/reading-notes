@@ -10,7 +10,9 @@
 </head>
 <body style="margin: 0;">
 <svg height="1000" width="1000" viewBox="0 0 1000 1000">
-    <rect x="10" y="10" width="30" height="30" stroke="black" fill="transparent" stroke-width="5"> </rect>
+    <rect x="10" y="10" width="30" height="30" stroke="black" fill="transparent" stroke-width="5">
+        <text x="10" y="10">X</text>
+    </rect>
     <rect x="60" y="10" rx="10" ry="10" width="30" height="30" stroke="black" fill="transparent" stroke-width="5"> </rect>
 
     <circle cx="25" cy="75" r="20" stroke="red" fill="transparent" stroke-width="5"> </circle>
@@ -26,7 +28,19 @@
     <path d="M20,230 Q40,205 50,230 T90,230" fill="none" stroke="blue" stroke-width="5"></path>
     <path d="M20,255 q20,-25 30,0 t40,0" fill="none" stroke="blue" stroke-width="5"></path>
     <path d="M20,280 Q40,255 50,280 Q63.33 306.67 90,280" fill="none" stroke="blue" stroke-width="5"></path>
-    <!--<path d="M20,255 Q40,230 50,255 T90,255" fill="none" stroke="blue" stroke-width="5"></path>-->
+    <svg x="0" y="310">
+        <path d="M10 315
+           L 110 215
+           A 30 50 0 0 1 162.55 162.45
+           L 172.55 152.45
+           A 30 50 -45 0 1 215.1 109.9
+           L 315 10" stroke="black" fill="green" stroke-width="2" fill-opacity="0.5"> </path>
+    </svg>
+    <g transform="translate(-10, 610)">
+        <path d="M40 0
+           A 40 40, 0, 0, 0, 80 40
+           L 80 0 Z" fill="green"> </path>
+    </g>
 </svg>
 <script>
 
