@@ -9,10 +9,8 @@
 </head>
 <body>
 <svg width="500" height="500"
-     viewPort="0 0 500 500" version="1.1"
+     viewBox="0 0 500 500" version="1.1"
      xmlns="http://www.w3.org/2000/svg">
-
-
     <defs>
         <clipPath id="myClip" >
             <path d="M900,300
@@ -22,20 +20,20 @@
                      S360,310 400,300 S460,290 500,300
                      S560,310 600,300 S660,290 700,300
                      S760,310 800,300 S860,290 900,300">
-                <animateTransform attributeName="transform"
-                                  attributeType="XML"
-                                  type="translate"
-                                  from="-400 0"
-                                  to="0 0"
-                                  dur="1s"
-                                  begin="1s"
-                                  repeatCount="indefinite"> </animateTransform>
-                <animateTransform attributeName="transform"
-                                  attributeType="XML"
-                                  type="translate"
-                                  from="-400 200"
-                                  to="-400 0"
-                                  dur="1s"
+            <animateTransform attributeName="transform"
+                              attributeType="XML"
+                              type="translate"
+                              from="-400 0"
+                              to="0 0"
+                              dur="1s"
+                              begin="1s"
+                              repeatCount="indefinite"> </animateTransform>
+            <animateTransform attributeName="transform"
+                              attributeType="XML"
+                              type="translate"
+                              from="-400 200"
+                              to="-400 0"
+                              dur="1s"
                                   repeatCount="1"> </animateTransform>
             </path>
         </clipPath>
@@ -44,8 +42,6 @@
     <circle cx="300" cy="300" r="197" fill="#f8f8f8" stroke="black" stroke-width="3"> </circle>
     <circle cx="300" cy="300" r="197" fill="#3385ff" stroke="black" stroke-width="3" clip-path="url(#myClip)"> </circle>
 </svg>
-<script>
-
-</script>
+<script></script>
 </body>
 </html>
