@@ -10,7 +10,30 @@
 </head>
 <body>
 <script>
-    let arr = [9,2,3,4,6,5,7,8,1,2,3,99];
+    let arr1 = [9,2,3,4,6,5,7,8,1,2,3,99];
+    let arr2 = [...arr1];
+    
+    selectSort(arr1);
+    console.log('selectSort ', arr1);
+    // 选择排序
+    function selectSort(arr) {
+      const len = arr.length;
+
+      for (let i = 0; i < len - 1; i++) {
+        let value = arr[i],
+            tempIndex = i;
+
+        for (let j = i + 1; j < len; j++) {
+          if (arr[j] < value) {
+            value = arr[j];
+            tempIndex = j;
+          }
+        }
+
+        swap(arr, i, tempIndex);
+      }
+    }
+
     // 归并排序
     function merge(arr, count = 1) {
         let sumCount = parseInt(arr.length/count);
@@ -28,6 +51,10 @@
         if (arr) {
 
         }
+    }
+
+    function swap(arr, i, j) {
+      [arr[i], arr[j]] = [arr[j], arr[i]]
     }
 </script>
 </body>
