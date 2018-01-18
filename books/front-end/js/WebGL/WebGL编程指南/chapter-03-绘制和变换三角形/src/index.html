@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href=""/>
+    <style>
+
+    </style>
+</head>
+<body>
+<canvas id="webgl" height="400" width="400"></canvas>
+<script src="../../../../../../../demo-and-assets/webgl-examples/lib/webgl-utils.js"></script>
+<script src="../../../../../../../demo-and-assets/webgl-examples/lib/webgl-debug.js"></script>
+<script src="../../../../../../../demo-and-assets/webgl-examples/lib/cuon-utils.js"></script>
+<script>
+    window.onload = function () {
+      const canvas = document.getElementById('webgl');
+      const gl = getWebGLContext(canvas);
+      let angle = 0;
+
+      // let tx = 0.5, ty = 0.5, tz = 0.0;
+
+      let VSHADER_SOURCE = `
+        attribute vec4 a_Position;
+        uniform mat4 u_xformMatrix;
+
+        void main(){
+          gl_Position = u_xformMatrix * a_Position;
+        }
+      `;
+
+      let FSHADER_SOURCE = `
+        precision mediump float;
+        uniform vec4 u_FragColor;
+
+        void main(){
+          gl_FragColor = u_FragColor;
+        }
+      `;
+
+      if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
+        console.log('初始化作色器失败!');
+        return;
+      }
+
+      let u_FragColor = gl.getUniformLocation(gl.program, 'u_FragColor');
+      // let u_Translation = gl.getUniformLocation(gl.program, 'u_Translation');
+      let n = initVertexBuffers(gl);
+
+      // 注意这里的0.0 是与a_Position的第四位相加结果必须等于1.0的结果
+      // gl.uniform4f(u_Translation, tx, ty, tz, 0.0);
+      gl.uniform4f(u_FragColor, 0.0, 1.0, 0.0, 1.0);
+      gl.clearColor(0.0, 0.0, 0.0, 1.0);
+      setInterval(function () {
+        rotateXY(gl, angle++);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
+      }, 50)
+      // gl.drawArrays(gl.LINES, 0, n);
+      // gl.drawArrays(gl.LINE_STRIP, 0, n);
+      // gl.drawArrays(gl.LINE_LOOP, 0, n);
+      // gl.drawArrays(gl.TRIANGLES, 0, n);
+    };
+
+    function initVertexBuffers(gl) {
+      let vertices = new Float32Array([
+          0.0, 0.5, -0.5, -0.5, 0.5, -0.5
+      ]);
+      let n = 3; // 顶点个数
+      let vertexBuffer = gl.createBuffer(); // 创建缓存区对象
+      let a_Position = gl.getAttribLocation(gl.program, 'a_Position'); // 顶点位置
+
+      if (!vertexBuffer) {
+        console.log('创建缓存区对象失败!');
+        return -1;
+      }
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer); // 将缓冲区对象绑定到目标
+      gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW); // 向缓冲区对象写入数据
+      gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0); // 将缓存区对象分配给a_position
+      gl.enableVertexAttribArray(a_Position); // 连接a_Position变量与分配给它的缓存区对象
+
+      return n;
+    }
+
+    // 逆时针旋转
+    function rotateXY(gl, angle) {
+      const radian = Math.PI*angle/180;
+      const cosB = Math.cos(radian);
+      const sinB = Math.sin(radian);
+      const xformMatrix = new Float32Array([
+        cosB, sinB, 0.0, 0.0,
+        -sinB, cosB, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 1.0
+      ]);
+
+      // 获取变量的存储位置
+      let u_xformMatrix = gl.getUniformLocation(gl.program, 'u_xformMatrix');
+      // 将矩阵传递给u_xformMatrix指定的uniform变量
+      gl.uniformMatrix4fv(u_xformMatrix, false, xformMatrix);
+    }
+</script>
+</body>
+</html>
