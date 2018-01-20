@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href=""/>
+    <style>
+
+    </style>
+</head>
+<body>
+<canvas id="webgl" height="400" width="400"></canvas>
+<script src="../../../../../../../demo-and-assets/webgl-examples/lib/webgl-utils.js"></script>
+<script src="../../../../../../../demo-and-assets/webgl-examples/lib/webgl-debug.js"></script>
+<script src="../../../../../../../demo-and-assets/webgl-examples/lib/cuon-utils.js"></script>
+<script>
+  let g_texUnit0 = false;
+  let g_texUnit1 = false;
+
+  window.onload = function () {
+    const canvas = document.getElementById('webgl');
+    const gl = getWebGLContext(canvas);
+
+    // 顶点着色器
+    let VSHADER_SOURCE = `
+        attribute vec4 a_Position;
+        attribute vec2 a_TexCoord; // 顶点的纹理坐标
+        varying vec2 v_TexCoord;   // 传递数据给片元着色器
+
+        void main(){
+          gl_Position = a_Position;
+          v_TexCoord = a_TexCoord;
+        }
+      `;
+
+    // 片元着色器
+    let FSHADER_SOURCE = `
+        precision mediump float; // 指定变量的范围和精度(必须)
+        uniform sampler2D u_Sampler0;
+        uniform sampler2D u_Sampler1;
+        varying vec2 v_TexCoord;
+
+        void main(){
+          vec4 color0 = texture2D(u_Sampler0, v_TexCoord); // 从sampler指定的纹理上获取coord指定的纹理坐标处的像素颜色
+          vec4 color1 = texture2D(u_Sampler1, v_TexCoord);
+          gl_FragColor = color0 * color1; // 两个纹理来计算最终的片元颜色，其中一种方式就是颜色矢量的分量乘法。
+        }
+      `;
+
+    if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
+      console.log('初始化作色器失败!');
+      return;
+    }
+
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    initTextures(gl, initVertexBuffers(gl));
+  };
+
+  function initVertexBuffers(gl) {
+    let verticesTexCoords = new Float32Array([
+      -0.5,  0.5,   0.0, 1.0,
+      -0.5, -0.5,   0.0, 0.0,
+       0.5,  0.5,   1.0, 1.0,
+       0.5, -0.5,   1.0, 0.0
+    ]);
+    const FSIZE = verticesTexCoords.BYTES_PER_ELEMENT;
+
+    let n = 4; // 顶点个数
+    let vertexTexCoordBuffer = gl.createBuffer(); // 第一步: 创建缓冲区对象
+    let a_Position = gl.getAttribLocation(gl.program, 'a_Position'); // 顶点位置
+    let a_TexCoord = gl.getAttribLocation(gl.program, 'a_TexCoord'); // 纹理坐标
+
+    if (!vertexTexCoordBuffer) {
+      console.log('创建缓存区对象失败!');
+      return -1;
+    }
+
+    // gl.ARRAY_BUFFER 表示缓冲区对象中包含了顶点的数据
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexTexCoordBuffer); // 第二步: 将缓存区对象(vertexColorBuffer)绑定到目标
+    // gl.STATIC_DRAW 只会向缓冲区中写入一次数据 但需要绘制很多次
+    gl.bufferData(gl.ARRAY_BUFFER, verticesTexCoords, gl.STATIC_DRAW); // 第三步: 向缓存区对象写入数据
+    gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, FSIZE*4, 0); // 第四步: 将缓存区对象分配给a_position
+    gl.enableVertexAttribArray(a_Position); // 第五步: 连接a_Position变量与分配给它的缓存区对象
+
+    gl.vertexAttribPointer(a_TexCoord, 2, gl.FLOAT, false, FSIZE*4, FSIZE*2); // 将缓存区对象分配给a_TexCoord
+    gl.enableVertexAttribArray(a_TexCoord); // 连接a_TexCoord变量与分配给它的缓存区对象
+
+    return n;
+  }
+
+  function initTextures(gl, n) {
+    let texture0 = gl.createTexture(); // 创建纹理对象
+    let texture1 = gl.createTexture(); // 创建纹理对象
+
+    // 获取u_Sampler0(取样器)的存储位置 该变量用来接收纹理对象
+    let u_Sampler0 = gl.getUniformLocation(gl.program, 'u_Sampler0');
+    let u_Sampler1 = gl.getUniformLocation(gl.program, 'u_Sampler1');
+
+    // Create the image object
+    let image0 = new Image();
+    let image1 = new Image();
+
+    if (!image0 || !image1) {
+      console.log('Failed to create the image object');
+      return false;
+    }
+    // Register the event handler to be called when image loading is completed
+    image0.onload = function(){ loadTexture(gl, n, texture0, u_Sampler0, image0, 0); };
+    image1.onload = function(){ loadTexture(gl, n, texture1, u_Sampler1, image1, 1); };
+    // Tell the browser to load an Image
+    image0.src = '../../../../../../../demo-and-assets/webgl-examples/resources/sky.jpg';
+    image1.src = '../../../../../../../demo-and-assets/webgl-examples/resources/circle.gif';
+
+    return true;
+  }
+
+  function loadTexture(gl, n, texture, u_Sampler, image, texUnit) {
+    // 对纹理图像进行Y轴反转 因为纹理坐标的T轴和图片坐标的Y轴是相反的
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+
+    if(texUnit === 0) {
+      gl.activeTexture(gl.TEXTURE0); // 开启0号纹理单元
+      g_texUnit0 = true;
+    } else {
+      gl.activeTexture(gl.TEXTURE1);
+      g_texUnit1 = true;
+    }
+
+    // 为纹理单元绑定纹理对象
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    // 配置纹理对象的参数 设置纹理图像映射到图形上的具体方式
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+    // 将纹理图像分配给纹理对象
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+
+    // 将texUnit号纹理传递给取色器中的取样变量
+    gl.uniform1i(u_Sampler, texUnit);
+
+    // Clear <canvas>
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    if (g_texUnit0 && g_texUnit1) {
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);   // Draw the rectangle
+    }
+  }
+</script>
+</body>
+</html>
