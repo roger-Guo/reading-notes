@@ -10,4 +10,6 @@
 #### __`纹理图像`__ 这张图
 #### __`纹素`__ 这张图的像素(使用RGBA或RGB格式编码)
 #### __`纹理坐标`__ WebGL使用st命名纹理坐标系 纹理图形的四个角的分别为左下角(0.0，0.0)、左上角(0.0，1.0)、右下角(1.0，0.0)、右上角(1.0，1.0)。坐标值与图形自身尺寸无关，右上角始终为(1.0, 1.0);
-
+#### __`gl.vertexAttributePointer(location, size, type, normalized, stride, offset)`__ 将绑定到gl.ARRAY_BUFFER的缓冲区对象分配给由location指定的attribute变量。
+* __`stride`__ 两个相邻顶点的字节数
+* __`offset`__ 指定缓冲区对象中的偏移量
