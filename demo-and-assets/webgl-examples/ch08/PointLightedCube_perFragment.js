@@ -3,18 +3,18 @@
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +
-  'attribute vec4 a_Normal;\n' +
-  'uniform mat4 u_MvpMatrix;\n' +
-  'uniform mat4 u_ModelMatrix;\n' +    // Model matrix
-  'uniform mat4 u_NormalMatrix;\n' +   // Transformation matrix of the normal
+  'attribute vec4 a_Normal;\n' +  // 进行模式矩阵之前的法向量
+  'uniform mat4 u_MvpMatrix;\n' +      // 阴影视图模型矩阵
+  'uniform mat4 u_ModelMatrix;\n' +    // 模型矩阵
+  'uniform mat4 u_NormalMatrix;\n' +   // 逆转置矩阵
   'varying vec4 v_Color;\n' +
   'varying vec3 v_Normal;\n' +
   'varying vec3 v_Position;\n' +
   'void main() {\n' +
-  '  gl_Position = u_MvpMatrix * a_Position;\n' +
+  '  gl_Position = u_MvpMatrix * a_Position;\n' +  // 阴影视图模型矩阵变换之后的最终在canvas上显示的坐标(但不是世界坐标，可能会缩小)
      // Calculate the vertex position in the world coordinate
-  '  v_Position = vec3(u_ModelMatrix * a_Position);\n' +
-  '  v_Normal = normalize(vec3(u_NormalMatrix * a_Normal));\n' +
+  '  v_Position = vec3(u_ModelMatrix * a_Position);\n' + // 模型矩阵变换之后的地点(世界坐标)
+  '  v_Normal = normalize(vec3(u_NormalMatrix * a_Normal));\n' + // 模型矩阵变换之后的法向量
   '  v_Color = a_Color;\n' + 
   '}\n';
 
