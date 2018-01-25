@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href=""/>
+    <style>
+
+    </style>
+</head>
+<body>
+<script>
+    Array.prototype.destructuringArray = function (values, keys, obj = {}) {
+      if (Array.isArray(values) && typeof keys === 'string' && keys[0] === '[' && keys[keys.length - 1] === ']') {
+        let arr = keys.slice(1, -1).split(',');
+
+        arr.forEach(function (elem, j) {
+          arr[j] = elem.trim();
+
+          const matchArr1 = elem.match(/\[/g);
+          const matchArr2 = elem.match(/\]/g);
+
+          if (matchArr1 && ((matchArr2 && matchArr1.length !== matchArr2.length) || !matchArr2)) {
+            arr[j+1] = elem + ', ' + arr[j+1];
+            arr[j] = '';
+          }
+        });
+
+        arr = arr.filter(function (element) {
+          return element !== '';
+        });
+
+        arr.forEach(function (elem, i) {
+          if (!elem.includes('[')) {
+            obj[elem] = values[i];
+          } else {
+            Array.prototype.destructuringArray(values[i], elem, obj);
+          }
+        });
+
+        return obj;
+      } else {
+        throw new Error('type error');
+      }
+    }
+
+    // Array.prototype.destructuringArray([1, [2], 3, [4, [5]]], '[a, [b], c, [d, [e]]]');
+</script>
+</body>
+</html>
