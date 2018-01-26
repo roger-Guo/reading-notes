@@ -1,9 +1,6 @@
 # webstorme file
 /.idea
 
-# other demo file
-/demo-and-assets
-
 .DS_Store
 
 # plugins
