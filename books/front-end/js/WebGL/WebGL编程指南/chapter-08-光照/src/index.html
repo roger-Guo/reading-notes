@@ -25,6 +25,8 @@
     let mvpMatrix = new Matrix4();   // 投影、视图、模型矩阵
     let normalMatrix = new Matrix4();   // 逆转置矩阵
 
+    let angle = 90;
+
     // 顶点着色器
     let VSHADER_SOURCE = `
         attribute vec4 a_Position;
@@ -96,25 +98,27 @@
     // 设置环境光
     gl.uniform3f(u_AmbientLight, 0.2, 0.2, 0.2);
 
-    // 按照Y轴旋转90度
-    modelMatrix.setRotate(90, 0, 1, 0);
+    setInterval(function () {
+      // 按照Y轴旋转90度
+      modelMatrix.setRotate(angle+=5, 0, 1, 0);
 
-    viewMatrix.setLookAt(6, 6, 14, 0, 0, 0, 0, 1, 0);
-    projMatrix.setPerspective(30, canvas.width/canvas.height, 1, 100);
-    mvpMatrix.set(projMatrix).multiply(viewMatrix);
+      viewMatrix.setLookAt(6, 6, 14, 0, 0, 0, 0, 1, 0);
+      projMatrix.setPerspective(30, canvas.width/canvas.height, 1, 100);
+      mvpMatrix.set(projMatrix).multiply(viewMatrix).multiply(modelMatrix);
 
-    // 逆转置矩阵
-    normalMatrix.setInverseOf(modelMatrix);
-    normalMatrix.transpose();
+      // 逆转置矩阵
+      normalMatrix.setInverseOf(modelMatrix);
+      normalMatrix.transpose();
 
-    // 将矩阵传递给u_MvpMatrix指定的uniform变量 todo elements 类型化数组(Float32Array)包含了Matrix4实例的矩阵元素 Page112
-    gl.uniformMatrix4fv(u_ModelMatrix, false,modelMatrix.elements);
-    gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix.elements);
-    gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix.elements);
+      // 将矩阵传递给u_MvpMatrix指定的uniform变量 todo elements 类型化数组(Float32Array)包含了Matrix4实例的矩阵元素 Page112
+      gl.uniformMatrix4fv(u_ModelMatrix, false,modelMatrix.elements);
+      gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix.elements);
+      gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix.elements);
 
-    // 同时清除深度缓冲区和颜色缓冲区
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_BYTE, 0);
+      // 同时清除深度缓冲区和颜色缓冲区
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_BYTE, 0);
+    }, 50);
   };
 
   function initVertexBuffers(gl) {
