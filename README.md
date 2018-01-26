@@ -9,9 +9,9 @@
       └── /精通CSS/   # 书名
 ```
 ## svg
-![][svg1]
+![路径切割][svg1]
 ## WebGL
-![][webgl1]
+![点光源和环境光照射的立方体][webgl1]
 
 [svg1]: ./demo-and-assets/images/gif/2018-01-26-14-19-00.gif
 [webgl1]: ./demo-and-assets/images/gif/2018-01-26-14-55-43.gif
