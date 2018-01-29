@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href=""/>
+    <style>
+
+    </style>
+</head>
+<body>
+<canvas id="webgl" height="400" width="400"></canvas>
+<script src="../../../../../../../demo-and-assets/webgl-examples/lib/webgl-utils.js"></script>
+<script src="../../../../../../../demo-and-assets/webgl-examples/lib/webgl-debug.js"></script>
+<script src="../../../../../../../demo-and-assets/webgl-examples/lib/cuon-utils.js"></script>
+<script src="../../../../../../../demo-and-assets/webgl-examples/lib/cuon-matrix.js"></script>
+<script>
+  // 顶点作色器
+  const VASHDER_SOURCE = `
+    attribute vec4 a_Position;
+    attribute vec2 a_TexCoord;
+    uniform mat4 u_MvpMatrix;
+    varying vec2 v_TexCoord;
+
+    void main() {
+      gl_Position = u_MvpMatrix * a_Position;
+      v_TexCoord = a_TexCoord;
+    }
+  `;
+  // 片元作色器
+  const FASHDER_SOURCE = `
+     precision mediump float;
+
+     // 绑定到gl.TEXTURE2D上的纹理数据类型
+     uniform sampler2D u_Sampler;
+     varying vec2 v_TexCoord;
+
+     void main() {
+       gl_FragColor = texture2D(u_Sampler, v_TexCoord);
+     }
+  `;
+  const g_MvpMatrix = new Matrix4();
+
+  main();
+
+  function main() {
+    const canvas = document.getElementById('webgl');
+    const gl = getWebGLContext(canvas);
+
+    if (!initShaders(gl, VASHDER_SOURCE, FASHDER_SOURCE)) {
+      console.log('获取webgl上下文环境失败!');
+      return false;
+    }
+
+    const n = initVertexBuffers(gl);
+    const currentAngle = [0.0, 0.0];
+    const viewProjMatrix = new Matrix4();
+    const u_MvpMatrix = gl.getUniformLocation(gl.program, 'u_MvpMatrix');
+
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    // 开启深度检测 这样绘制的顶点就会按照深度去覆盖后面的物体
+    gl.enable(gl.DEPTH_TEST);
+
+    // 透视投影可视空间
+    // param1 可视空间底面与顶面的夹角
+    // param2 指定近裁剪面的宽高比
+    // param3 近裁剪面到视点的距离 必须大于0
+    // param4 远裁剪面到视点的距离 必须大于0
+    viewProjMatrix.setPerspective(30.0, canvas.width/canvas.height, 1.0, 100.0);
+    // param1-3 视点
+    // param4-6 观察点 物体所在的点
+    // param7-9 上方向 最终绘制到屏幕上影像向上的方向 上方向不确定 就好像人的头可以左右摇摆 绘制出来的图像也就不确定了
+    viewProjMatrix.lookAt(3.0, 3.0, 7.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+    initEventHandlers(canvas, currentAngle);
+    initTextures(gl);
+
+    const tick = function () {
+      draw(gl, n, viewProjMatrix, u_MvpMatrix, currentAngle);
+      requestAnimationFrame(tick, canvas)
+    };
+
+    tick();
+  }
+
+  // 创建顶点缓冲区
+  function initVertexBuffers(gl) {
+    // Create a cube
+    //    v6----- v5
+    //   /|      /|
+    //  v1------v0|
+    //  | |     | |
+    //  | |v7---|-|v4
+    //  |/      |/
+    //  v2------v3
+    const vertices = new Float32Array([   // Vertex coordinates
+      1.0, 1.0, 1.0,  -1.0, 1.0, 1.0,  -1.0,-1.0, 1.0,   1.0,-1.0, 1.0,    // v0-v1-v2-v3 front
+      1.0, 1.0, 1.0,   1.0,-1.0, 1.0,   1.0,-1.0,-1.0,   1.0, 1.0,-1.0,    // v0-v3-v4-v5 right
+      1.0, 1.0, 1.0,   1.0, 1.0,-1.0,  -1.0, 1.0,-1.0,  -1.0, 1.0, 1.0,    // v0-v5-v6-v1 up
+     -1.0, 1.0, 1.0,  -1.0, 1.0,-1.0,  -1.0,-1.0,-1.0,  -1.0,-1.0, 1.0,    // v1-v6-v7-v2 left
+     -1.0,-1.0,-1.0,   1.0,-1.0,-1.0,   1.0,-1.0, 1.0,  -1.0,-1.0, 1.0,    // v7-v4-v3-v2 down
+      1.0,-1.0,-1.0,  -1.0,-1.0,-1.0,  -1.0, 1.0,-1.0,   1.0, 1.0,-1.0     // v4-v7-v6-v5 back
+    ]);
+
+    const texCoords = new Float32Array([   // Texture coordinates 纹理坐标
+      1.0, 1.0,   0.0, 1.0,   0.0, 0.0,   1.0, 0.0,    // v0-v1-v2-v3 front
+      0.0, 1.0,   0.0, 0.0,   1.0, 0.0,   1.0, 1.0,    // v0-v3-v4-v5 right
+      1.0, 0.0,   1.0, 1.0,   0.0, 1.0,   0.0, 0.0,    // v0-v5-v6-v1 up
+      1.0, 1.0,   0.0, 1.0,   0.0, 0.0,   1.0, 0.0,    // v1-v6-v7-v2 left
+      0.0, 0.0,   1.0, 0.0,   1.0, 1.0,   0.0, 1.0,    // v7-v4-v3-v2 down
+      0.0, 0.0,   1.0, 0.0,   1.0, 1.0,   0.0, 1.0     // v4-v7-v6-v5 back
+    ]);
+
+    // Indices of the vertices 顶点目录
+    const indices = new Uint8Array([
+       0, 1, 2,   0, 2, 3,    // front
+       4, 5, 6,   4, 6, 7,    // right
+       8, 9,10,   8,10,11,    // up
+      12,13,14,  12,14,15,    // left
+      16,17,18,  16,18,19,    // down
+      20,21,22,  20,22,23     // back
+    ]);
+
+    // 创建缓冲区对象
+    const indexBuffer = gl.createBuffer();
+
+    if (initArrayBuffer(gl, vertices, 3, gl.FLOAT, 'a_Position')) {
+      return false;
+    }
+
+    if (initArrayBuffer(gl, texCoords, 2, gl.FLOAT, 'a_TexCoord')) {
+      return false;
+    }
+
+    // 禁用对target的绑定 在绘制动画时 清空以前的缓冲区
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    // gl.ELEMENT_ARRAY_BUFFER 表示缓冲区对象中包含顶点的索引值
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+
+    return indices.length;
+  }
+
+  function initArrayBuffer(gl, data, num, type, attribute) {
+    // 创建缓冲区对象
+    const buffer = gl.createBuffer();
+    const a_attribute = gl.getAttribLocation(gl.program, attribute);
+
+    // 绑定缓冲区对象到WebGL系统中已经存在的目标(gl.ARRAY_BUFFER page72)上
+    // gl.ARRAY_BUFFER 表示缓冲区对象中包含的顶点的数据(此时并没有数据进来)
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    // 开辟存储空间，向绑定在目标上的缓冲区对象中写入数据data
+    // gl.STATIC_DRAW 只会向缓冲区对象中写入一次数据，然后绘制若干次。
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    // a_attribute 指定分配变量attribute的存储位置
+    // size 指定缓冲区中每个顶点的分量个数 不是顶点的大小 比如只取颜色 可能只有3 不会包括顶点分量
+    // type 指定数据格式
+    // 相邻连个顶点之间的字节数 每个顶点的大小
+    // 指定缓冲区对象中的偏移量 a_attribute在每个顶点中的位置
+    gl.vertexAttribPointer(a_attribute, num, type, false, 0, 0);
+    // 为了能使顶点作色器访问缓冲区内的数据，需要开启 a_attribute 对象。
+    gl.enableVertexAttribArray(a_attribute);
+  }
+
+  function initEventHandlers(canvas, currentAngle) {
+    let dragging = false;
+    let lastX = -1;
+    let lastY = -1;
+
+    canvas.onmousedown = function (ev) {
+      const x = ev.clientX;
+      const y = ev.clientY;
+      const rect = ev.target.getBoundingClientRect();
+
+      // 点在canvas上面
+      if (rect.left <= x && x <= rect.right && rect.top <= y && y <= rect.bottom) {
+        lastX = x;
+        lastY = y;
+        dragging = true;
+      }
+    };
+
+    canvas.onmouseup = function () {
+      dragging = false;
+    };
+
+    document.body.onmousemove = function (ev) {
+      if(ev.target === canvas) {
+        const x = ev.clientX;
+        const y = ev.clientY;
+
+        if (dragging) {
+          const factor = 100/canvas.height; // 旋转因子
+          const dx = factor * (x - lastX);
+          const dy = factor * (y - lastY);
+
+          console.log(dx);
+
+          currentAngle[0] = Math.max(Math.min(currentAngle[0] + dy, 90.0), -90.0);
+          // currentAngle[0] = currentAngle[0] + dy;
+          currentAngle[1] = currentAngle[1] + dx;
+        }
+
+        lastX = x;
+        lastY = y;
+      } else {
+        dragging = false;
+      }
+    };
+
+    /*canvas.onmousemove = function (ev) {
+
+    };*/
+  }
+
+  function draw(gl, n, viewProjMatrix, u_MvpMatrix, currentAngle) {
+    g_MvpMatrix.set(viewProjMatrix);
+    g_MvpMatrix.rotate(currentAngle[0], 1.0, 0.0, 0.0);
+    g_MvpMatrix.rotate(currentAngle[1], 0.0, 1.0, 0.0);
+    gl.uniformMatrix4fv(u_MvpMatrix, false, g_MvpMatrix.elements);
+
+    // 同时清除深度缓冲区和颜色缓冲区 按位或就可以了
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.drawElements(gl.TRIANGLES, n, gl.UNSIGNED_BYTE, 0);
+  }
+
+  // 初始化纹理
+  function initTextures(gl) {
+    const texture = gl.createTexture();
+    const image = new Image();
+    const u_Sampler = gl.getUniformLocation(gl.program, 'u_sampler');
+
+    image.onload = function () {
+      loadTexture(gl, texture, u_Sampler, image)
+    };
+
+    image.src = '../../../../../../../demo-and-assets/webgl-examples/resources/sky.jpg';
+
+    return true;
+  }
+
+  function loadTexture(gl, texture, u_Sampler, image) {
+    // 对纹理单元图像进行Y轴反转 因为图片坐标系统与纹理坐标系统Y轴相反
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    // 激活零号纹理单元
+    gl.activeTexture(gl.TEXTURE0);
+    // 开启texture指定的纹理对象，并将其绑定到target(gl.TEXTURE_2D)上
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    // 配置纹理对象参数
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    // 将纹理图像分配给纹理对象
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+    // 将零号纹理单元传递给片元着色器
+    gl.uniform1i(u_Sampler, 0);
+  }
+</script>
+</body>
+</html>
