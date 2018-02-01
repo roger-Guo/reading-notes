@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href=""/>
+    <style>
+        .item {
+            width: 64.72px;
+            height: 40px;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="overflow: hidden;">
+
+    </div>
+<script>
+    const colors = [
+      "F2EFE6", "f17c67", "DDF0ED", "376956", "C3BED4", "495A80", "C7FFEC", "E9F01D", "9966CC", "00FF80", "EEE8AB", "BDB76A", "008573", "00755E", "DEA681", "483C32", "FD5B78", "FE4C40", "DE3163", "8A3324",
+      "B87333", "ACE1AF", "404040", "F5FFFB", "7CFC00", "EEE8AA", "801818", "D9D6CF", "CCFF00", "FFA07B", "ff3399", "96582a", "426ab3", "f3715c", "87843b", "228fbd", "2a5caa", "7fb80e", "fdb933", "da765b",
+      "006c54", "7bbfea", "6f599c", "b69968", "ca8687", "5c7a29", "b7ba6b", "70a19f", "fedcbd", "563624", "051405", "FF0090", "00EBC0", "835c25", "e46084", "2A8FBD", "FF84BA", "BF0A10", "20F856", "171916",
+      "4C556E", "283734", "EEE7CE", "ADA0A5", "16110B", "515733", "9999FF", "C1D169", "CCCCFF", "B05B5C", "9C5657", "D4CDC9", "CE90A2", "BE7591", "C691A9", "06B9D1", "B57795", "C78DA8", "FDFCF9", "E3AACB",
+      "EDC8DC", "F9ECF1", "F8F1F0", "99758D", "AF8DA5", "C1A3B8", "D8C2D0", "E1CFD8", "9D7294", "B48BAA", "C19DB8", "D9BFD2", "ECE1E3", "FAFBFB", "70186F", "8A0060", "D1ABC0", "821A7D", "8F76AD", "733C80",
+      "725C9E", "C4B1BE", "7B4885", "B31E72", "B50079", "943D92", "8F0783", "BA79B1", "BCA1CC", "7D4F9E", "D4C1DC", "A2A3A2", "4F4D4D", "543F31", "000A00", "7E8282", "68786C", "90A691", "9C898E", "9BA88D",
+      "D6A78B", "B58D4C", "544946", "B8989C", "9C9EA1", "828281", "BFB691", "99876D", "FCFCF5", "5F7896", "6483B0", "344069", "005A78", "5875AD", "00466B", "005687", "004E78", "87C4ED", "144099", "05173B",
+      "003D99", "1A4FA3", "58C3E0", "001C54", "0079BA", "ABD6E0", "95C4DB", "2883B0", "006A80", "00838F", "AFE0E0", "C8E6E2", "ADD4D9", "E4F4F5", "4D8AA8", "ABD9E0", "B4DBD4", "B2DBD5", "84C2B7", "209E85",
+      "428C6D", "A0BD2B", "007850", "006650", "15AD66", "6ABD78", "83AD50", "999E31", "AEBA7F", "BDCC12", "CCE099", "6BB073", "A9CF53", "D7E37F", "E3DCA1", "BAA834", "877710", "EDD340", "D6C560", "FFEF94",
+      "E8A600", "F5AB00", "FCD200", "F2CA5C", "C28E00", "D69200", "B08427", "FFEBB5", "FFDF78", "FFEF61", "F2EBA7", "F7F7D2", "DECB00", "FFEA00", "B3495C", "C7006A", "C27280", "C70851", "66182C", "C24630",
+      "DB4527", "EB5528", "ED859A", "F7C6C7", "E61C62", "F5DDDA", "D65A6F", "EB5E7C", "D6006F", "FAD7D9", "F09091", "F29B88", "D9210D", "DE7062", "C7161C", "E8251E", "D4341C", "B58453", "733C12", "E3CAA8",
+      "CCB281", "D4B68C", "BFA173", "FFC796", "7A4917", "F2D8AC", "C28642", "FAC26E", "FCE1AE", "DB8C37", "8C5119", "C75610", "E39139", "A16D35", "D17A00", "E8A23A", "F7B881", "F2963A", "F28D00", "F5AD3B",
+      "ED6F00", "1E90FF", "FFFACD", "FFE4B5", "CD853F", "FFA07A", "E9967A", "FA8072", "696969", "808080", "A9A9A9", "D3D3D3", "F5F5F5", "8B0000", "A52A2A", "CD5C5C", "F08080", "FFFAFA", "FFE4E1", "FF6347",
+      "FF4500", "A0522D", "FFF5EE", "8B4513", "D2691E", "F4A460", "FFDAB9", "FAF0E6", "FF8C00", "FFEBCD", "FFEFD5", "F5DEB3", "FFFAF0", "FFF8DC", "F0E68C", "BDB76B", "808000", "FAFAD2", "556B2F", "ADFF2F",
+      "7FFF00", "006400", "228B22", "32CD32", "3CB371", "00FF7F", "F5FFFA", "7FFFAA", "20B2AA", "48D1CC", "008080", "008B8B", "2F4F4F", "00CED1", "AFEEEE", "E1FFFF", "B0E0E6", "00BFFF", "87CEEB", "87CEFA",
+      "F0F8FF", "708090", "6495ED", "F8F8FF", "E6E6FA", "6A5ACD", "8A2BE2", "4B0082", "9400D3", "BA55D3", "8B008B", "FF00FF", "EE82EE", "DA70D6", "FF1493", "FF69B4", "DB7093", "FFF0F5", "DC143C", "FFB6C1",
+      "86BD77", "FDD3E1", "68BCDD", "D699BA", "F1ECB9", "E880A2", "918280", "48414A", "EDE6E1", "E0D3BF", "ABABAB", "606968", "A9A6AB", "A35568", "EDB9BD", "D97E96", "6B6575", "F5EDF1", "D9C1D7", "D4C1DB",
+      "B8AFC9", "8F74AD", "4A1075", "86869E", "A08AB5", "B8BBDE", "575F96", "6A6DB0", "0077B8", "3D5363", "56718F", "759FBD", "BCD4E3", "0088C7", "008FD1", "7495A6", "B9DCED", "00799E", "00A6DE", "0090B0",
+      "4FABC2", "0096B0", "426B6B", "009EA3", "008F81", "91BFBD", "426E62", "426E62", "009973", "57BDAA", "00997A", "CCE6DE", "8AA184", "A7B56B", "7C8260", "98A16A", "D4C69F", "F0D800", "8C585F", "BF6A67",
+      "E3ABA1", "F5E2DC", "F2B0AC", "C75872", "D6A9AA", "DE7683", "C25988", "DB4E02", "806E6B", "B08C80", "947665", "B07B61", "E8BF9B", "DEC68A", "F2E8C4", "F5C400", "FFE100", "EDAF1F", "FFE100", "DBC751",
+      "F2D88F", "EDE6DA", "D1AD69", "C5C8C9", "FAC000", "F5B6B3", "3D3461", "00214F", "665856", "AB6900", "8F695E", "12126E", "6E280E", "946A2C", "EDC2BE", "7D0043", "4D157D", "002770", "005BAB", "005A5C",
+      "008F0A", "8EC21F", "FFF200", "F29500", "ff55ff", "ffffff", "000000"
+    ];
+
+    colors.sort();
+
+    let html = '';
+
+    colors.forEach(function (elem) {
+      html += `<div class="item" style="background-color: #${elem}"></div>`;
+    });
+
+    document.querySelector('.container').innerHTML = html;
+
+</script>
+</body>
+</html>

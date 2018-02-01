@@ -1,19 +1,22 @@
 // RoundedPoints.js (c) 2012 matsuda
 // Vertex shader program
 var VSHADER_SOURCE =
-  'attribute vec4 a_Position;\n' +
+  'attribute vec2 a_Position;\n' +
+  'varying vec2 v_Position;\n' +
+
   'void main() {\n' +
   '  gl_Position = a_Position;\n' +
+  '  v_Position = a_Position;\n' +
   '  gl_PointSize = 10.0;\n' +
   '}\n';
 
 // Fragment shader program
 var FSHADER_SOURCE =
-  '#ifdef GL_ES\n' +
   'precision mediump float;\n' +
-  '#endif GL_ES\n' +
+  'varying vec2 v_Position;\n' +
+
   'void main() {\n' +    // Center coordinate is (0.5, 0.5)
-  '  float d = distance(gl_PointCoord, vec2(0.5, 0.5));\n' +
+  '  float d = distance(v_Position, vec2(0.5, 0.5));\n' +
   '  if(d < 0.5) {\n' +  // Radius is 0.5
   '    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
   '  } else { discard; }\n' +
@@ -55,9 +58,9 @@ function main() {
 
 function initVertexBuffers(gl) {
   var vertices = new Float32Array([
-    0, 0.5,   -0.5, -0.5,   0.5, -0.5
+    0.5, 0.5
   ]);
-  var n = 3; // The number of vertices
+  var n = 1; // The number of vertices
 
   // Create a buffer object
   var vertexBuffer = gl.createBuffer();  
