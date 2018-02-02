@@ -14,10 +14,9 @@
 
     </svg>
 <script>
-  const LENGTH_OF_SIDE = 20; // 边长
+  const LENGTH_OF_SIDE = 18; // 边长
   const SQRT3 = Math.sqrt(3); // sqrt(3)
   const SQRT3D2 = Math.sqrt(3)/2; // sqrt(3)/2
-
   const colors = [
     "F2EFE6", "f17c67", "DDF0ED", "376956", "C3BED4", "495A80", "C7FFEC", "E9F01D", "9966CC", "00FF80", "EEE8AB", "BDB76A", "008573", "00755E", "DEA681", "483C32", "FD5B78", "FE4C40", "DE3163", "8A3324",
     "B87333", "ACE1AF", "404040", "F5FFFB", "7CFC00", "EEE8AA", "801818", "D9D6CF", "CCFF00", "FFA07B", "ff3399", "96582a", "426ab3", "f3715c", "87843b", "228fbd", "2a5caa", "7fb80e", "fdb933", "da765b",
@@ -44,8 +43,8 @@
   ];
 
   let svgHtml = '';
-  colors.sort();
 
+  colors.sort();
   main();
 
   function main() {
@@ -74,20 +73,6 @@
       }
     } while (centers.length < colors.length);
 
-//    centers.sort(function (a, b) {
-//      if (a.x > b.x) {
-//        return 1
-//      } else if (a.x < b.x){
-//        return -1
-//      } else if (a.y > b.y) {
-//        return 1
-//      } else if (a.y < b.y) {
-//        return -1
-//      } else {
-//        return 0;
-//      }
-//    });
-
     colors.forEach(function (elem, index) {
       svgHtml += getHexagonWithPoints(getPointsWithCenterCoord(centers[index].x, centers[index].y, LENGTH_OF_SIDE), elem);
     });
@@ -97,7 +82,7 @@
 
   
   function getHexagonWithPoints(temp, color = 'FFFFFF') {
-    return `<path d="M${temp[0].x} ${temp[0].y}
+    return `<path d="M${temp[0].x} ${temp[0].y},
                      L${temp[1].x} ${temp[1].y},
                       ${temp[2].x} ${temp[2].y},
                       ${temp[3].x} ${temp[3].y},
@@ -167,10 +152,6 @@
       y: parseFloat(coord.y) + parseFloat(y)
     }
   }
-
-
-
-
 </script>
 </body>
 </html>
