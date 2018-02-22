@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href=""/>
+    <style>
+
+    </style>
+</head>
+<body>
+<script>
+class WeightedQuickUnionUF {
+  static id = [];  // 父链接数组(由触点索引)
+  static sz = [];  // (由触点索引的)各个节点所对应的分量的大小
+  static count; // 连通分量的数量
+
+  constructor(N) {
+    count = N;
+
+    for (let i = 0; i < N; i++) {
+      id[i] = i;
+      sz[i] = 1;
+    }
+  }
+
+  static getCount() {
+    return count;
+  }
+
+  static connected(p, q) {
+    return find(p) === find(q);
+  }
+
+  // 找到根节点
+  static find(p) {
+    while (p !== id[p]) {
+      p = id[p];
+    }
+
+    return p;
+  }
+
+  static union(p, q) {
+    const i = find(p);
+    const j = find(q);
+
+    if (i === j) {
+      return;
+    }
+
+    if (sz[i] < sz[j]) {
+      id[i] = j;
+      sz[j] += sz[i];
+    } else {
+      id[j] = i;
+      sz[i] += sz[j];
+    }
+
+    count--;
+  }
+}
+</script>
+</body>
+</html>

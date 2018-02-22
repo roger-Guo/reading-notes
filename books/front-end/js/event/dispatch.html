@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+<title>38</title>
+<head>
+    <style>
+        div{
+            width:500px;
+            height:500px;
+            background-color:#aabbcc;
+        }
+
+    </style>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+</head>
+<body>
+<div></div>
+<button>trigger</button>
+
+</body>
+<script>
+  $(function(){
+    $('div').mousedown(function(event, a){
+      if(event.which == 1 || a == 'left'){
+        alert('left click');
+      }
+      if(event.which == 3 || a == 'right'){
+        alert('right click');
+      }
+    });
+    $('button').click(function(){
+      $('div').trigger('mousedown', ['right']);
+    });
+
+  });
+</script>
+</html>

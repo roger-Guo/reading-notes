@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href=""/>
+</head>
+<body>
+<script>
+    const str = '(1 * (2 / 2) * (6 / 3) * 15 + 23 - 23 + 4 * 25 / (4 + 6) + 1.5)';
+
+    console.log(calculate(str));
+
+    function calculate(str) {
+      if (typeof str === 'string') {
+        const numbersStack = [], // 数字堆栈
+              operatorsStack = [], // 操作符堆栈
+              numberRegexp = /[0-9\.]/m, // 匹配正数
+              operatorRegexp = /[\+\-\*\/\(\)]/m; // 匹配四则运算操作符
+
+        let preIndex = -2; // 上一次插入的数字的索引值
+
+        for (let i = 0, len = str.length; i < len; i++) {
+          const presentStr = str[i];
+
+          if (numberRegexp.test(presentStr)) {
+            if (preIndex+1 === i) {
+              numbersStack[numbersStack.length - 1] = numbersStack[numbersStack.length - 1] + presentStr;
+            } else {
+              numbersStack.push(presentStr);
+            }
+
+            preIndex = i;
+          } else if (operatorRegexp.test(presentStr)) {
+             if (presentStr !== ')') {
+               operatorsStack.push(presentStr)
+             } else {
+               let operationArr = [numbersStack.pop()];
+
+               do {
+                 operationArr = [operatorsStack.pop(), ...operationArr];
+                 operationArr = [numbersStack.pop(), ...operationArr];
+               } while (operatorsStack[operatorsStack.length - 1] !== '(');
+
+               operatorsStack.pop();
+
+               do {
+                 if (operationArr.length < 5) {
+                   calculator(operationArr, 0);
+                 } else {
+                   let operator = operationArr[3];
+
+                   if (operator === '*' || operator === '/') {
+                     calculator(operationArr, 2);
+                   } else {
+                     calculator(operationArr, 0);
+                   }
+                 }
+               } while (operationArr.length >= 3);
+
+               numbersStack.push(operationArr[0])
+             }
+          } else if (presentStr === ' ') {
+
+          } else {
+            throw new Error('argument[0] type error');
+          }
+        }
+
+        return numbersStack[0];
+      } else {
+        throw new Error('argument[0] type error');
+      }
+    }
+
+    function calculator(operationArr, num) {
+      const num2 = parseFloat(operationArr.splice(num + 2, 1)[0]);
+      const operator = operationArr.splice(num + 1, 1)[0];
+      const num1 = parseFloat(operationArr.splice(num, 1)[0]);
+
+      switch (operator) {
+        case '+': operationArr.splice(num, 0, num1 + num2); break;
+        case '-': operationArr.splice(num, 0, num1 - num2); break;
+        case '*': operationArr.splice(num, 0, num1 * num2); break;
+        case '/': operationArr.splice(num, 0, num1 / num2); break;
+        default: throw new Error('operator Error');
+      }
+    }
+</script>
+</body>
+</html>
